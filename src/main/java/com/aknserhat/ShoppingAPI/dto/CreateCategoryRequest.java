@@ -13,5 +13,5 @@ import java.util.List;
 @AllArgsConstructor
 public class CreateCategoryRequest {
     private String name;
-    private List<Product> products = new ArrayList<>();
+    private List<ProductDto> products = new ArrayList<>();
 }

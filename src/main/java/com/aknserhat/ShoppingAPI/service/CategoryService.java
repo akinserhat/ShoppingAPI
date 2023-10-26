@@ -3,6 +3,7 @@ package com.aknserhat.ShoppingAPI.service;
 import com.aknserhat.ShoppingAPI.dto.CategoryDto;
 import com.aknserhat.ShoppingAPI.dto.CategoryNameDto;
 import com.aknserhat.ShoppingAPI.dto.CreateCategoryRequest;
+import com.aknserhat.ShoppingAPI.dto.ProductDto;
 import com.aknserhat.ShoppingAPI.model.Category;
 import com.aknserhat.ShoppingAPI.repository.CategoryRepository;
 import lombok.RequiredArgsConstructor;
@@ -26,14 +27,26 @@ public class CategoryService {
                         .build())
                 .collect(Collectors.toList());
     }
-    //hata var düzelt
+
     public CategoryDto getCategoryDetailsById(Long id) {
         return categoryRepository.findById(id)
-                .map(category -> CategoryDto.builder()
-                        .id(category.getId())
-                        .name(category.getName())
-                        .products(category.getProducts())
-                        .build())
+                .map(category -> {
+                    List<ProductDto> productListDto = category.getProducts().stream()
+                            .map(product -> ProductDto.builder()
+                                    .id(product.getId())
+                                    .name(product.getName())
+                                    .price(product.getPrice())
+                                    .categoryId(product.getCategory().getId())
+                                    .stockAmount(product.getStockAmount())
+                                    .createdAt(product.getCreatedAt())
+                                    .build())
+                            .collect(Collectors.toList());
+                    return CategoryDto.builder()
+                            .id(category.getId())
+                            .name(category.getName())
+                            .products(productListDto)
+                            .build();
+                })
                 .orElseThrow(() -> new RuntimeException("HATAAAAAA!!!!!"));
     }
 
